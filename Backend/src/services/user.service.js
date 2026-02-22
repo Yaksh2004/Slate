@@ -1,4 +1,4 @@
-import userRepository from "../repositories/user.repository.js";
+import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
 class UserService {
@@ -6,7 +6,7 @@ class UserService {
     const { name, email, password } = userData;
 
     //checking if user already exists
-    const existingUser = await userRepository.findByEmail(email);
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new Error("User with this email already exists");
     }
@@ -15,7 +15,7 @@ class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     //create new user
-    const user = await userRepository.create({
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -26,19 +26,6 @@ class UserService {
       name: user.name,
       email: user.email,
     };
-  }
-
-  async getAllUsers() {
-    const users = await userRepository.findAll();
-    return users;
-  }
-
-  async findByUserId(id) {
-    const user = await userRepository.findById(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return user;
   }
 }
 
