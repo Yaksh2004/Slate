@@ -27,6 +27,19 @@ class UserService {
       email: user.email,
     };
   }
+
+  async getAllUsers() {
+    const users = await userRepository.findAll();
+    return users;
+  }
+
+  async findByUserId(id) {
+    const user = await userRepository.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  }
 }
 
 export default new UserService();
