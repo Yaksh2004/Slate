@@ -5,6 +5,7 @@ import AppError from "../utils/AppError.js";
 
 class TaskService {
   async createTask(userId, projectId, task) {
+    //validation
     const validProjectId = mongoose.Types.ObjectId.isValid(projectId);
     if (!validProjectId) {
       console.log("ProjectId:", projectId, projectId.length);
@@ -14,9 +15,7 @@ class TaskService {
     if (!project) {
       throw new AppError("Project Not Found", 404);
     }
-    if (!task.title || !task.title.trim()) {
-      throw new AppError("Task Title cannot be Empty", 400);
-    }
+    //creating
     const createdTask = await Task.create({
       title: task.title,
       project: projectId,
@@ -48,6 +47,80 @@ class TaskService {
       status: t.status,
       createdAt: t.createdAt,
     }));
+  }
+
+  async updateTask(userId, projectId, taskId, updatedData) {
+    //validation
+    const validProjectId = mongoose.Types.ObjectId.isValid(projectId);
+    if (!validProjectId) {
+      throw new AppError("Invalid project ID", 400);
+    }
+
+    const validTaskId = mongoose.Types.ObjectId.isValid(taskId);
+    if (!validTaskId) {
+      throw new AppError("Invalid task ID", 400);
+    }
+
+    const project = await Project.findOne({ _id: projectId, user: userId });
+    if (!project) {
+      throw new AppError("Project Not Found", 404);
+    }
+
+    const task = await Task.findOne({ _id: taskId, project: projectId });
+    if (!task) {
+      throw new AppError("Task Not Found", 404);
+    }
+
+    //updating
+    if (updatedData.title !== undefined) {
+      task.title = updatedData.title;
+    }
+
+    if (updatedData.description !== undefined) {
+      task.description = updatedData.description;
+    }
+
+    if (updatedData.status !== undefined) {
+      task.status = updatedData.status;
+    }
+
+    await task.save();
+
+    return {
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+    };
+  }
+
+  async deleteTask(userId, projectId, taskId) {
+    //validation
+    const validProjectId = mongoose.Types.ObjectId.isValid(projectId);
+    if (!validProjectId) {
+      throw new AppError("Invalid project ID", 400);
+    }
+
+    const validTaskId = mongoose.Types.ObjectId.isValid(taskId);
+    if (!validTaskId) {
+      throw new AppError("Invalid task ID", 400);
+    }
+
+    const project = await Project.findOne({ _id: projectId, user: userId });
+    if (!project) {
+      throw new AppError("Project Not Found", 404);
+    }
+
+    const deletedTask = await Task.findOneAndDelete({
+      _id: taskId,
+      project: projectId,
+    });
+
+    if (!deletedTask) {
+      throw new AppError("Task Not Found", 404);
+    }
   }
 }
 
