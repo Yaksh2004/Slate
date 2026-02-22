@@ -18,6 +18,24 @@ class UserController {
       });
     }
   }
+
+  async loginUser(req, res) {
+    try {
+      const { email, password } = req.body;
+      const result = await userService.loginUser({ email, password });
+
+      res.status(200).json({
+        success: true,
+        message: "User Login Successful",
+        ...result,
+      });
+    } catch (error) {
+      res.status(401).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new UserController();
