@@ -1,7 +1,7 @@
 import { Router } from "express";
 import projectController from "../controllers/project.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
-import validate from "../middleware/validate.middleware.js";
+import { validate } from "../middleware/validate.middleware.js";
 import { createProjectSchema } from "../validators/project.validator.js";
 const router = Router();
 

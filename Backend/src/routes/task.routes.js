@@ -1,11 +1,11 @@
 import { Router } from "express";
 import taskController from "../controllers/task.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
-import { validate } from "../middleware/validate.middleware.js";
 import {
   createTaskSchema,
   updateTaskSchema,
 } from "../validators/task.validator.js";
+import { validate } from "../middleware/validate.middleware.js";
 const router = Router({ mergeParams: true });
 
 // create a task
