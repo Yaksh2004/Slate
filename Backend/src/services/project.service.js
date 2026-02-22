@@ -1,10 +1,11 @@
 import Project from "../models/Project.js";
 import mongoose from "mongoose";
+import AppError from "../utils/AppError.js";
 
 class ProjectService {
   async createProject(userId, projectName) {
     if (!projectName || !projectName.trim()) {
-      throw new Error("Provide Valid project name");
+      throw new AppError("Provide Valid project name", 400);
     }
 
     const project = await Project.create({
@@ -29,7 +30,7 @@ class ProjectService {
 
   async deleteProject(userId, projectId) {
     if (!mongoose.Types.ObjectId.isValid(projectId)) {
-      throw new Error("Project Id not valid");
+      throw new AppError("Project Id not valid", 400);
     }
 
     const deleted = await Project.findOneAndDelete({
@@ -38,7 +39,7 @@ class ProjectService {
     });
 
     if (!deleted) {
-      throw new Error("Project Not Found!");
+      throw new AppError("Project Not Found!", 404);
     }
   }
 }

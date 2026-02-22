@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import AppError from "../utils/AppError.js";
 
 class UserService {
   async createUser(userData) {
@@ -9,7 +10,7 @@ class UserService {
     //checking if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      throw new AppError("User with this email already exists", 409);
     }
 
     //hashing password
@@ -33,13 +34,13 @@ class UserService {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      throw new Error("Invalid Credentials");
+      throw new AppError("Invalid Credentials", 401);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new Error("Invalid Credentials");
+      throw new Error("Invalid Credentials", 401);
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {

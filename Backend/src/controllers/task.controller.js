@@ -18,7 +18,7 @@ class TaskController {
         task,
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });
@@ -38,7 +38,7 @@ class TaskController {
         tasks,
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });

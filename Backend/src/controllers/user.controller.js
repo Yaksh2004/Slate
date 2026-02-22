@@ -12,7 +12,7 @@ class UserController {
         data: user,
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });
@@ -30,7 +30,7 @@ class UserController {
         ...result,
       });
     } catch (error) {
-      res.status(401).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });

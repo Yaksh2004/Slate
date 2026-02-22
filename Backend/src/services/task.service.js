@@ -1,20 +1,21 @@
 import mongoose from "mongoose";
 import Project from "../models/Project.js";
 import Task from "../models/Task.js";
+import AppError from "../utils/AppError.js";
 
 class TaskService {
   async createTask(userId, projectId, task) {
     const validProjectId = mongoose.Types.ObjectId.isValid(projectId);
     if (!validProjectId) {
       console.log("ProjectId:", projectId, projectId.length);
-      throw new Error("Invalid project ID");
+      throw new AppError("Invalid project ID", 400);
     }
     const project = await Project.findOne({ _id: projectId, user: userId });
     if (!project) {
-      throw new Error("Project Not Found");
+      throw new AppError("Project Not Found", 404);
     }
     if (!task.title || !task.title.trim()) {
-      throw new Error("Task Title cannot be Empty");
+      throw new AppError("Task Title cannot be Empty", 400);
     }
     const createdTask = await Task.create({
       title: task.title,
@@ -33,11 +34,11 @@ class TaskService {
   async getTasksByProject(userId, projectId) {
     const validProjectId = mongoose.Types.ObjectId.isValid(projectId);
     if (!validProjectId) {
-      throw new Error("Invalid project ID");
+      throw new AppError("Invalid project ID", 400);
     }
     const project = await Project.findOne({ _id: projectId, user: userId });
     if (!project) {
-      throw new Error("Project Not Found");
+      throw new AppError("Project Not Found", 404);
     }
     const tasks = await Task.find({ project: projectId });
     return tasks.map(t => ({

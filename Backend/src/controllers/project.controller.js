@@ -12,7 +12,7 @@ class ProjectController {
         project,
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });
@@ -29,7 +29,7 @@ class ProjectController {
         projects,
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });
@@ -46,7 +46,7 @@ class ProjectController {
         message: "Project deleted successfully",
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });
