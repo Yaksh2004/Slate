@@ -1,4 +1,5 @@
 import userRepository from "../repositories/user.repository.js";
+import bcrypt from "bcrypt";
 
 class UserService {
   async createUser(userData) {
@@ -10,8 +11,16 @@ class UserService {
       throw new Error("User with this email already exists");
     }
 
+    //hashing password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     //create new user
-    const user = await userRepository.create(userData);
+    const user = await userRepository.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
     return {
       id: user._id,
       name: user.name,
