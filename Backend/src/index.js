@@ -6,10 +6,12 @@ import connectDB from "./db.js";
 import userRouter from "./routes/user.routes.js";
 import projectRouter from "./routes/project.routes.js";
 import taskRouter from "./routes/task.routes.js";
+import cors from "cors";
 
 await connectDB();
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use("/users", userRouter);
 app.use("/projects", projectRouter);
