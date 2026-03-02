@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
 import { loginUser } from "@/services/authService";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,12 +11,14 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async e => {
     e.preventDefault();
     try {
       const res = await loginUser({ email, password });
-      localStorage.setItem("token", res.data.token);
+      login(res.data.token);
+      navigate("/dashboard");
       console.log("Success: ", res.data.success);
     } catch (error) {
       console.log(error);
