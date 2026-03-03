@@ -3,11 +3,13 @@ import { getProjects, createProject, deleteProject } from "@/services/projectSer
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [name, setName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects();
@@ -44,40 +46,57 @@ function Dashboard() {
   }
 
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-semibold">Dashboard</h1>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button>New Project</Button>
-        </DialogTrigger>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="cursor-pointer">New Project</Button>
+            </DialogTrigger>
 
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Project</DialogTitle>
-          </DialogHeader>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Project</DialogTitle>
+              </DialogHeader>
 
-          <form onSubmit={handleCreate} className="space-y-4">
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Project name" required />
+              <form onSubmit={handleCreate} className="space-y-4">
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Project name" required />
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                Cancel
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="grid gap-4">
+          {projects.map(project => (
+            <div
+              key={project.id}
+              className="flex items-center justify-between rounded-xl border bg-muted/40 p-4 hover:bg-muted transition"
+            >
+              <span className="cursor-pointer font-medium" onClick={() => navigate(`/projects/${project.id}`)}>
+                {project.name}
+              </span>
+
+              <Button
+                className="cursor-pointer"
+                variant="destructive"
+                size="xs"
+                onClick={() => handleDelete(project.id)}
+              >
+                Delete
               </Button>
-              <Button type="submit">Create</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <ul>
-        {projects.map(project => (
-          <li key={project.id}>
-            {project.name}
-            <button onClick={() => handleDelete(project.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
