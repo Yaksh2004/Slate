@@ -1,19 +1,32 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { getTasksByProject } from "@/services/taskService";
+
 const columns = [
   { key: "todo", title: "Todo" },
   { key: "in-progress", title: "In Progress" },
   { key: "done", title: "Done" },
 ];
 
-const mockTasks = [
-  { id: 1, title: "Setup project", description: "Initialize repository", status: "todo" },
-  { id: 2, title: "Design layout", description: "Plan UI structure", status: "todo" },
-  { id: 3, title: "Build Dashboard", description: "Integrate project CRUD", status: "in-progress" },
-  { id: 4, title: "Setup Auth", description: "Implement JWT flow", status: "done" },
-];
-
 function Board() {
+  const { projectId } = useParams();
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  async function fetchTasks() {
+    try {
+      const res = await getTasksByProject(projectId);
+      setTasks(res.data.tasks);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const grouped = columns.reduce((acc, column) => {
-    acc[column.key] = mockTasks.filter(task => task.status === column.key);
+    acc[column.key] = tasks.filter(task => task.status === column.key);
     return acc;
   }, {});
 
